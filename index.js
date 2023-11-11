@@ -84,7 +84,7 @@ res.json("Thanks for visiting");
 
 server.get("/home", (req,res)=>{
     var userName = req.session.userName;
-    res.send("Welcome " + userName);
+    res.json("Welcome " + userName);
 })
 
 
