@@ -11,10 +11,17 @@ const server = express()
 
 // const openai = new OpenAI({
 //     apiKey: process.env.OPENAI_API_KEY,
+
 // });
 
+const corsOptions = {
+    origin: "*",
+    credentials: true,
+  };
+
 server.use(express.json())
-server.use(cors())
+
+server.use(cors(corsOptions))
 // server.use(cors({ origin: '*' }));
 server.use(session({
     secret: "hello",
