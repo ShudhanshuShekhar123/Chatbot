@@ -3,15 +3,15 @@ const OpenAI = require("openai")
 const session = require("express-session");
 
 const cors = require('cors');
-require('dotenv').config();
+// require('dotenv').config();
 
 
 const server = express()
 
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+// const openai = new OpenAI({
+//     apiKey: process.env.OPENAI_API_KEY,
+// });
 
 server.use(express.json())
 server.use(cors())
@@ -24,7 +24,7 @@ server.use(session({
   }));
   
 
-  
+
 
 
 server.get("/",async (req, res) => {
