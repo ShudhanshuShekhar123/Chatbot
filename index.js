@@ -1,110 +1,160 @@
 const express = require("express")
-// const OpenAI = require("openai")
-const session = require("express-session");
+const OpenAI = require("openai")
+// const session = require("express-session");
+// const bodyParser = require('body-parser')
+// const cookieParser = require('cookie-parser')
+const mongoose = require("mongoose")
+const conversationmodal = require("./usermodal")
 
 const cors = require('cors');
-// require('dotenv').config();
+require('dotenv').config();
 
 
 const server = express()
 
 
-// const openai = new OpenAI({
-//     apiKey: process.env.OPENAI_API_KEY,
 
-// });
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
 
-const corsOptions = {
-    origin: "*",
-    credentials: true,
-  };
+});
 
+
+
+
+server.use(cors("*"))
 server.use(express.json())
 
-server.use(cors(corsOptions))
-// server.use(cors({ origin: '*' }));
-server.use(session({
-    secret: "hello",
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false }
-  }));
+
+
+
+
+
+server.get("/chat", async (req, res) => {
+
+  let conversationhistory =   await chatbot(req, res)
+  res.json(conversationhistory)
+
+  // res.json("Thanks for visiting");
+
+})
+
+
+const chatbot = async (req, res)=>{
+
+
   
+  console.log(req.body, "body here")
+  const { role, content } = req.body;
+
+
+    
+
+
+    // const conversationsData = [
+    //   { conversation: ['Message 1', 'Message 2'] },
+    //   { conversation: ['Hello', 'Hi', 'How are you?'] },
+    //   // Add more conversation data as needed
+    // ];
+
+
+  // const condition ={_id : "655b1f19469ff698b9044899"}
+  // const update = {
+  //   $push: {
+  //     conversation: { role: req.body.role, content: req.body.content },
+  //   },
+  // };
+
+  // const options = { new: true, upsert: false }; 
+
+  // const updatedDocument = await conversqationmodel.findOneAndUpdate(condition, update, options);
+
+const cuurentconversation =  await conversationmodal.create({role, content})
+
+  const allconverrsation =  await  conversationmodal.find({})
+//   // const allobj = await query.exec();
+let store =  []
+
+for  (let i =0; i<=allconverrsation.length-1; i++){
+  let obj ={}
+
+  obj["role"] = allconverrsation[i].role
+  obj["content"] = allconverrsation[i].content
+
+   store.push(obj)
+      
+}
+
+// console.log(allconverrsation,"consvs")
 
 
 
-
-server.get("/",async (req, res) => {
-
-
-    // console.log(req.body, "body here")
-
-    // req.session.exampleData = 'This is session data.';
-
-//     let prompt = req.body
-
-
-//     console.log(req.session, "session property first")
-  
-  
-//     let conversation = req.session.conversationContext || [];
-//     console.log(conversation,"convertaio  arrya")
-//     conversation.push(prompt)
-//     console.log(conversation, "conversation")
-
-//     const response = await openai.chat.completions.create({
-//         model: "gpt-3.5-turbo",
-//         messages: [
-//             {
-//                 role: "user",
-//                 content:
-//                   "  you are a expert in Psychology.. you  have to help the user to solve their psychological problems . .you have to  answer in brief  but meaningfull at the same time dont give large responses . keep your points short.i you have to be very strict to  understand the context and if the context of questions is not related to Psychology   then tell the user to ask questions only related to Psychology  .dont answer the questions that is not aligning or if it does not depend on  the contetxt of Psychology or if it is out of scope of psychology. "
-//               },
-//               ...conversation
-
-
-//         ],
-//         temperature: 0.5,
-//         max_tokens: 256,
-//         top_p: 1,
-//         frequency_penalty: 0,
-//         presence_penalty: 0,
-//     });
-
-
-
-
-//    const ai_Response =  response['choices'][0]['message']
-//    conversation.push(ai_Response)
-//    req.session.conversationContext = conversation;
-
-//    console.log(req.session, "session property second")
-//  console.log(session.conversationContext, "here copnversations congtext")
-
-//    res.json(req.session)
-req.session.userName = 'Aditya@123';
  
-res.json("Thanks for visiting");
+ 
+
+
+  const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+          {
+              role: "system",
+              content:
+                "  you are a expert in Psychology.. you  have to help the user to solve their psychological problems . .you have to  answer in brief  but meaningfull at the same time dont give large responses . keep your points short.i you have to be very strict to  understand the context and if the context of questions is not related to Psychology   then tell the user to ask questions only related to Psychology  .dont answer the questions that is not aligning or if it does not depend on  the contetxt of Psychology or if it is out of scope of psychology. "
+            },
+        ...store
+
+      ],
+      temperature: 0.5,
+      max_tokens: 256,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+  });
+
+
+
+
+   const ai_Response =  response['choices'][0]['message']
+  //  const updatelater = {
+  //   $push: {
+  //     conversation: { role: "assistnat", content: ai_Response},
+  //   },
+  // };
+  console.log(ai_Response)
+
+  const  updatedDocument = await conversationmodal.create(ai_Response);
+  const getconvo =  await  conversationmodal.find({})
+  
+
+console.log(getconvo,"convo here")
+return ai_Response
+
+
+
+
+}
+
+server.get("/start",  async(req, res) => {
+ 
+    const deltedocument = await  conversationmodal.deleteMany({})
+  
+    let conversationhistory =   await  chatbot(req, res)
+    res.json(conversationhistory)
+
 
 })
 
 
-server.get("/home", (req,res)=>{
-    var userName = req.session.userName;
-    res.json("Welcome " + userName);
-})
 
+const connect = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URL)
+    console.log("Connected to Mongodb Atlas")
+  } catch (error) {
+    console.log("server error")
+  }
 
-
-
-
-// server.post("/destroy", (req,res)=>{
-//     req.session.destroy(function(err) {
-//         res.send("sessions desroyed")
-//         // cannot access session here
-//       })
-// }) 
-
+}
 
 
 
@@ -112,5 +162,6 @@ server.get("/home", (req,res)=>{
 
 
 server.listen(8000, () => {
-    console.log("Listening at PORT 8000")
+  console.log("Listening at PORT 8000")
+  connect()
 })

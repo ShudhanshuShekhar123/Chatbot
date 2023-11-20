@@ -1,77 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mindful Mentor</title>
-  <style>
-    /* Add your styles from the "styles.css" file here */
-    .App {
-      /* Add your styles for the App component here */
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindful Mentor</title>
+    <style>
+        /* Add your styles from the "styles.css" file here */
+        .App {
+            /* Add your styles for the App component here */
+        }
 
-    /* Add other styles as needed */
-  </style>
+        /* Add other styles as needed */
+    </style>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script> -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
+
 <body>
-  <div class="App">
-    <div>
-      <h1>Mindful Mentor</h1>
-      <div class="send">
-        <input class="input_field" placeholder="Enter Your question here" />
-        <button onclick="handlesend()" class="send_btn">Send</button>
-        <button onclick="handlestart()">Start</button>
-      </div>
+    <div class="App">
+        <div>
+            <h1>Mindful Mentor</h1>
+            <div class="send">
+                <input class="input_field" placeholder="Enter Your question here" />
+                <button onclick="handlesend()" class="send_btn">Send</button>
+                <button onclick="handlestart()">Start</button>
+            </div>
+        </div>
+
+        <!-- Add a container to display the conversation -->
+        <div class="container" id="conversationContainer"></div>
+
+        <script>
+            // Move the state variables outside the React component
+            let text = "";
+            let data = [];
+
+            // Move the API call functions outside the React component
+
+            const handlesend = () => {
+                console.log(document.cookie, "cookie here")
+                let obj = {
+                    role: "user",
+                    content: "hello"
+                };
+
+                // Make your API call using vanilla JavaScript (replace the URL)
+                //     fetch('http://localhost:8000/home',{
+
+                //         method:"GET",
+                //         credentials:"include"
+
+                //     })
+                //       .then((res) => res.json())
+                //       .then((resData) => {
+                //         console.log(resData);
+                //         // Manipulate the response data as needed
+                //       })
+                //       .catch((error) => {
+                //         console.error("Error:", error);
+                //       });
+                //   };
+                console.log(document.cookie,"cooier")
+                axios.defaults.withCredentials = true;
+                axios.get('http://localhost:8000/home')
+                    .then((response) => {
+                        console.log(response.data);
+                        // Manipulate the response data as needed
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+
+
+            }
+                const handlestart = () => {
+
+
+                    let obj = {
+                        role: "user",
+                        content: "Hi!"
+                    };
+
+                    // Make your API call using vanilla JavaScript (replace the URL)
+                    // fetch("http://localhost:8000/", {
+                    //     // method:"GET",
+                    //     credentials: "include"
+                    // })
+                    //     .then((res) => res.json())
+                    //     .then((resData) => {
+                    //         console.log(resData);
+                    //         // Manipulate the response data as needed
+                    //         document.getElementById('conversationContainer').innerText = JSON.stringify(resData.conversationContext);
+                    //     })
+                    //     .catch((error) => {
+                    //         console.error("Error:", error);
+                    //     });
+
+                    axios.defaults.withCredentials = true;
+                    console.log(document.cookie,"cooier")
+                axios.get('http://localhost:8000/')
+                    .then((response) => {
+                        console.log(response.data);
+                        // Manipulate the response data as needed
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+                };
+        </script>
     </div>
-
-    <!-- Add a container to display the conversation -->
-    <div class="container" id="conversationContainer"></div>
-
-    <script>
-      // Move the state variables outside the React component
-      let text = "";
-      let data = [];
-
-      // Move the API call functions outside the React component
-      const handlesend = () => {
-        let obj = {
-          role: "user",
-          content: "hello"
-        };
-
-        // Make your API call using vanilla JavaScript (replace the URL)
-        fetch('https://shud.onrender.com/home',{ method: 'GET',
-  credentials: 'include',})
-          .then((res) => res.json())
-          .then((resData) => {
-            console.log(resData);
-            // Manipulate the response data as needed
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      };
-
-      const handlestart = () => {
-        let obj = {
-          role: "user",
-          content: "Hi!"
-        };
-
-        // Make your API call using vanilla JavaScript (replace the URL)
-        fetch('https://shud.onrender.com/',{ method: 'GET',
-  credentials: 'include'})
-          .then((res) => res.json())
-          .then((resData) => {
-            console.log(resData);
-            // Manipulate the response data as needed
-            document.getElementById('conversationContainer').innerText = JSON.stringify(resData.conversationContext);
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      };
-    </script>
-  </div>
 </body>
+
 </html>
