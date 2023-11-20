@@ -20,7 +20,7 @@ const openai = new OpenAI({
 
 
 
-server.use(cors())
+server.use(cors({ origin: '*' }));
 server.use(express.json())
 
 
