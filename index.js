@@ -20,9 +20,10 @@ const openai = new OpenAI({
 
 
 
-server.use(cors({ origin: '*' }));
+
 server.use(express.json())
 
+server.use(cors({ origin: '*' }));
 
 
 
@@ -31,8 +32,7 @@ server.use(express.json())
 
 
 
-
-server.get("/chat", async (req, res) => {
+server.post("/chat", async (req, res) => {
 
   let conversationhistory =   await chatbot(req, res)
   res.json(conversationhistory)
@@ -136,7 +136,7 @@ return ai_Response
 
 }
 
-server.get("/start",  async(req, res) => {
+server.post("/start",  async(req, res) => {
  
     const deltedocument = await  conversationmodal.deleteMany({})
   
