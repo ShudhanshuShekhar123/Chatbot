@@ -43,33 +43,9 @@ server.post("/chat", async (req, res) => {
 
 
 const chatbot = async (req, res)=>{
-
-
   
   console.log(req.body, "body here")
   const { role, content } = req.body;
-
-
-    
-
-
-    // const conversationsData = [
-    //   { conversation: ['Message 1', 'Message 2'] },
-    //   { conversation: ['Hello', 'Hi', 'How are you?'] },
-    //   // Add more conversation data as needed
-    // ];
-
-
-  // const condition ={_id : "655b1f19469ff698b9044899"}
-  // const update = {
-  //   $push: {
-  //     conversation: { role: req.body.role, content: req.body.content },
-  //   },
-  // };
-
-  // const options = { new: true, upsert: false }; 
-
-  // const updatedDocument = await conversqationmodel.findOneAndUpdate(condition, update, options);
 
 const cuurentconversation =  await conversationmodal.create({role, content})
 
@@ -86,14 +62,6 @@ for  (let i =0; i<=allconverrsation.length-1; i++){
    store.push(obj)
       
 }
-
-// console.log(allconverrsation,"consvs")
-
-
-
- 
- 
-
 
   const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -117,12 +85,7 @@ for  (let i =0; i<=allconverrsation.length-1; i++){
 
 
    const ai_Response =  response['choices'][0]['message']
-  //  const updatelater = {
-  //   $push: {
-  //     conversation: { role: "assistnat", content: ai_Response},
-  //   },
-  // };
-  console.log(ai_Response)
+
 
   const  updatedDocument = await conversationmodal.create(ai_Response);
   const getconvo =  await  conversationmodal.find({})
